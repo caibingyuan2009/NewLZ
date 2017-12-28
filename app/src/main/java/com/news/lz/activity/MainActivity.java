@@ -1,10 +1,10 @@
 package com.news.lz.activity;
 
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.TableLayout;
 
 import com.news.lz.R;
 import com.news.lz.adapter.MainPagerAdapter;
@@ -18,13 +18,16 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener{
+public class MainActivity extends AppCompatActivity {
+    private static final int TAB_POSITION_NEWS = 0;
+    private static final int TAB_POSITION_RED_CULTURE = 1;
+    private static final int TAB_POSITION_ME = 2;
 
     @BindView(R.id.view_pager)
     public ViewPager mViewPager;
 
     @BindView(R.id.tabLayout)
-    public TableLayout mTableLayout;
+    public TabLayout mTabLayout;
 
     private MainPagerAdapter mMainPagerAdapter;
 
@@ -44,6 +47,11 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     private void initViews() {
         mMainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager(), getPageList());
         mViewPager.setAdapter(mMainPagerAdapter);
+
+        mTabLayout.setupWithViewPager(mViewPager);
+        mTabLayout.getTabAt(TAB_POSITION_NEWS).setText(R.string.main_tab_news);
+        mTabLayout.getTabAt(TAB_POSITION_RED_CULTURE).setText(R.string.main_tab_red_culture);
+        mTabLayout.getTabAt(TAB_POSITION_ME).setText(R.string.main_tab_me);
     }
 
     private List<Fragment> getPageList() {
