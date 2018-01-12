@@ -6,23 +6,20 @@ import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.FindCallback;
-import com.avos.avoscloud.GetCallback;
-import com.news.lz.utils.CollectionUtils;
+import com.news.lz.engine.callback.DataOperateCallback;
+import com.news.lz.entity.NewItem;
+import com.news.lz.utils.DataParseUtils;
+import com.news.lz.utils.SortUtils;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
+
+import static com.news.lz.utils.DataParseUtils.NEWS_CLASS_NAME;
 
 /**
  * Created by caibingyuan on 2018/1/11.
  */
 
 public class ServiceDataManager {
-    private static final String NEWS_CLASS_NAME = "News";
-    private static final String KEY_NEWS_ID = "news_id";
-    private static final String KEY_NEWS_TITLE = "news_title";
-    private static final String KEY_NEWS_CONTENT = "news_content";
-
     private static final String READ_CULTURE_CLASS_NAME = "ReadCulture";
     private static ServiceDataManager sServiceDataManager;
 
@@ -41,32 +38,34 @@ public class ServiceDataManager {
 
     }
 
-    public void readService() {
+    public void readNews(final DataOperateCallback callback) {
         AVQuery<AVObject> query = new AVQuery<>(NEWS_CLASS_NAME);
         query.findInBackground(new FindCallback<AVObject>() {
             @Override
             public void done(List<AVObject> list, AVException e) {
-                Collections.sort(list, new Comparator<AVObject>() {
-                    @Override
-                    public int compare(AVObject avObject, AVObject t1) {
-                        int newId1 = avObject.getInt(KEY_NEWS_ID);
-                        int newId2 = t1.getInt(KEY_NEWS_ID);
-                        Log.d("caibingyuan", "compare newId1 = " + newId1);
-                        Log.d("caibingyuan", "compare newId2 = " + newId2);
+                List<NewItem> newItemList = DataParseUtils.parseAVObjectToNewItem(list);
+                SortUtils.sortNewsList(newItemList);
+                for (NewItem newItem : newItemList) {
+                    Log.d("caibingyuan", "News Title = " + newItem.getNewTitle());
+                    Log.d("caibingyuan", "News Content = " + newItem.getNewContent());
+                    Log.d("caibingyuan", "News Pic Url = " + newItem.getNewPicUrl());
+                }
 
-                        if (newId1 > newId2) {
-                            return 1;
-                        } else if(newId1 < newId2) {
-                            return -1;
-                        } else {
-                            return 0;
-                        }
-                    }
-                });
+                callback.onDone(newItemList.get(0).getNewPicUrl());
+            }
+        });
+    }
 
-                for (AVObject object : list) {
-                    Log.d("caibingyuan", "News Title = " + object.getString(KEY_NEWS_TITLE));
-                    Log.d("caibingyuan", "News Content = " + object.get(KEY_NEWS_CONTENT));
+    public void readRedCulture() {
+        AVQuery<AVObject> query = new AVQuery<>(NEWS_CLASS_NAME);
+        query.findInBackground(new FindCallback<AVObject>() {
+            @Override
+            public void done(List<AVObject> list, AVException e) {
+                List<NewItem> newItemList = DataParseUtils.parseAVObjectToNewItem(list);
+                SortUtils.sortNewsList(newItemList);
+                for (NewItem newItem : newItemList) {
+                    Log.d("caibingyuan", "News Title = " + newItem.getNewTitle());
+                    Log.d("caibingyuan", "News Content = " + newItem.getNewContent());
                 }
             }
         });
