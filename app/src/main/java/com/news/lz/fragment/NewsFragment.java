@@ -16,6 +16,9 @@ import com.bumptech.glide.Glide;
 import com.news.lz.R;
 import com.news.lz.engine.ServiceDataManager;
 import com.news.lz.engine.callback.DataOperateCallback;
+import com.news.lz.entity.model.BaseItem;
+
+import java.util.List;
 
 /**
  * 新闻页面
@@ -46,7 +49,7 @@ public class NewsFragment extends Fragment {
     private void testService() {
         ServiceDataManager.getInstance().readNews(new DataOperateCallback() {
             @Override
-            public void onDone(final String url) {
+            public void onReadSuccess(final String url) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -55,6 +58,10 @@ public class NewsFragment extends Fragment {
                                 .into(mIv);
                     }
                 });
+            }
+
+            @Override
+            public void onReadSuccess(List<? extends BaseItem> itemList) {
             }
         });
     }

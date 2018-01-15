@@ -1,7 +1,7 @@
 package com.news.lz.utils;
 
-import com.avos.avoscloud.AVObject;
-import com.news.lz.entity.NewItem;
+import com.news.lz.entity.model.BaseItem;
+import com.news.lz.entity.model.NewItem;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,16 +13,15 @@ import java.util.List;
 
 public class SortUtils {
 
-    public static void sortNewsList(List<NewItem> list) {
-        Collections.sort(list, new Comparator<NewItem>() {
+    public static void sortItemList(List<? extends BaseItem> list) {
+        Collections.sort(list, new Comparator<BaseItem>() {
             @Override
-            public int compare(NewItem newItem1, NewItem newItem2) {
-                int newId1 = newItem1.getNewId();
-                int newId2 = newItem2.getNewId();
-
-                if (newId1 > newId2) {
+            public int compare(BaseItem item1, BaseItem item2) {
+                int id1 = item1.getId();
+                int id2 = item2.getId();
+                if (id1 > id2) {
                     return 1;
-                } else if(newId1 < newId2) {
+                } else if(id1 < id2) {
                     return -1;
                 } else {
                     return 0;

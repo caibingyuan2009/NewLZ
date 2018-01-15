@@ -1,8 +1,8 @@
 package com.news.lz.fragment;
 
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,12 +10,10 @@ import android.view.ViewGroup;
 import com.news.lz.R;
 
 /**
- * 红土文化页面
- * Created by caibingyuan on 2017/12/27.
+ * Created by caibingyuan on 2018/1/15.
  */
 
-public class RedCultureFragmet extends Fragment {
-
+public class MainFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,7 +21,7 @@ public class RedCultureFragmet extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState){
-        View rootView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_redculture_fragment, null);
+        View rootView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_main_fragment, null);
         return rootView;
     }
 

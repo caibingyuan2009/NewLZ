@@ -7,20 +7,21 @@ import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.FindCallback;
 import com.news.lz.engine.callback.DataOperateCallback;
-import com.news.lz.entity.NewItem;
+import com.news.lz.entity.model.NewItem;
+import com.news.lz.entity.model.VideoItem;
 import com.news.lz.utils.DataParseUtils;
 import com.news.lz.utils.SortUtils;
 
 import java.util.List;
 
-import static com.news.lz.utils.DataParseUtils.NEWS_CLASS_NAME;
+import static com.news.lz.entity.statistics.ServiceFieldConst.NEWS_CLASS_NAME;
+import static com.news.lz.entity.statistics.ServiceFieldConst.VIDEO_CLASS_NAME;
 
 /**
  * Created by caibingyuan on 2018/1/11.
  */
 
 public class ServiceDataManager {
-    private static final String READ_CULTURE_CLASS_NAME = "ReadCulture";
     private static ServiceDataManager sServiceDataManager;
 
     public static ServiceDataManager getInstance() {
@@ -39,34 +40,25 @@ public class ServiceDataManager {
     }
 
     public void readNews(final DataOperateCallback callback) {
-        AVQuery<AVObject> query = new AVQuery<>(NEWS_CLASS_NAME);
-        query.findInBackground(new FindCallback<AVObject>() {
+        AVQuery<AVObject> queryNews = new AVQuery<>(NEWS_CLASS_NAME);
+        queryNews.findInBackground(new FindCallback<AVObject>() {
             @Override
             public void done(List<AVObject> list, AVException e) {
                 List<NewItem> newItemList = DataParseUtils.parseAVObjectToNewItem(list);
-                SortUtils.sortNewsList(newItemList);
-                for (NewItem newItem : newItemList) {
-                    Log.d("caibingyuan", "News Title = " + newItem.getNewTitle());
-                    Log.d("caibingyuan", "News Content = " + newItem.getNewContent());
-                    Log.d("caibingyuan", "News Pic Url = " + newItem.getNewPicUrl());
-                }
-
-                callback.onDone(newItemList.get(0).getNewPicUrl());
+                SortUtils.sortItemList(newItemList);
+                callback.onReadSuccess(newItemList.get(0).getNewPicUrl());
             }
         });
     }
 
-    public void readRedCulture() {
-        AVQuery<AVObject> query = new AVQuery<>(NEWS_CLASS_NAME);
-        query.findInBackground(new FindCallback<AVObject>() {
+    public void readVideo(final DataOperateCallback callback) {
+        AVQuery<AVObject> queryVideo = new AVQuery<>(VIDEO_CLASS_NAME);
+        queryVideo.findInBackground(new FindCallback<AVObject>() {
             @Override
             public void done(List<AVObject> list, AVException e) {
-                List<NewItem> newItemList = DataParseUtils.parseAVObjectToNewItem(list);
-                SortUtils.sortNewsList(newItemList);
-                for (NewItem newItem : newItemList) {
-                    Log.d("caibingyuan", "News Title = " + newItem.getNewTitle());
-                    Log.d("caibingyuan", "News Content = " + newItem.getNewContent());
-                }
+                List<VideoItem> videoItemList = DataParseUtils.parseAVObjectToVideoItem(list);
+                SortUtils.sortItemList(videoItemList);
+                callback.onReadSuccess(videoItemList);
             }
         });
     }
