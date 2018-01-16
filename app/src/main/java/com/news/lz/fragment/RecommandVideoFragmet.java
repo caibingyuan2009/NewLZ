@@ -24,7 +24,7 @@ import static com.news.lz.entity.statistics.ItemTypeConst.ITEM_TYPE_VIDEO;
  * Created by caibingyuan on 2017/12/27.
  */
 
-public class VideoFragmet extends Fragment {
+public class RecommandVideoFragmet extends Fragment {
     private RecyclerView mRecyclerView;
     private BaseRecyclerViewAdapter mAdapter;
 

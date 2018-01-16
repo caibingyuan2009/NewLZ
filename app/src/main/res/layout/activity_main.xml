@@ -3,19 +3,19 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
 
     <android.support.v4.view.ViewPager
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/view_pager"
-        android:background="@android:color/darker_gray"
-        android:layout_above="@+id/divider"/>
+        android:background="@android:color/holo_blue_dark"/>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#eeeeee"
+        android:layout_height="0.5dp"
+        android:background="#2f2f32"
         android:id="@+id/divider"
         android:layout_above="@+id/tabLayout"/>
 
@@ -24,8 +24,10 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        app:tabSelectedTextColor="#ff669900"
-        app:tabTextColor="#333333"
-        app:tabIndicatorColor="@android:color/holo_green_dark"/>
+        app:tabSelectedTextColor="@android:color/white"
+        android:background="@android:color/transparent"
+        app:tabTextColor="#9a9c9e"
+        app:tabTextAppearance="@style/TabLayoutStyle"
+        app:tabIndicatorColor="@android:color/transparent"/>
 
 </RelativeLayout>

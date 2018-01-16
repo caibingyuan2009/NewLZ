@@ -1,5 +1,6 @@
 package com.news.lz.activity;
 
+import android.graphics.Color;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
