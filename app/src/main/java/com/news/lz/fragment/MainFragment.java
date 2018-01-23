@@ -4,9 +4,11 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.news.lz.R;
@@ -25,6 +27,13 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     public TextView mRecommandTv;
     @BindView(R.id.tv_operate)
     public TextView mOperateTv;
+    @BindView(R.id.layout_fragment)
+    public FrameLayout mFrameLayout;
+
+    private RecommendVideoFragmet mRecommendVideoFragmet;
+    private OperaVideoFragment mOperaVideoFragment;
+    private Fragment mCurrentFragment;
+    private int mCurrentFragmentIndex = -1;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,9 +49,9 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     }
 
     private void updateViews() {
+        selectTopic(TOPIC_RECOMMAND);
         mRecommandTv.setOnClickListener(this);
         mOperateTv.setOnClickListener(this);
-        selectTopic(TOPIC_RECOMMAND);
     }
 
     @Override
@@ -67,5 +76,77 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             mRecommandTv.setTextColor(Color.parseColor("#9a9a9a"));
             mOperateTv.setTextColor(Color.WHITE);
         }
+
+        switchToFragment(topicIndex);
+    }
+
+    private void switchToFragment(int fragmentIndex) {
+        if (fragmentIndex == TOPIC_RECOMMAND) {
+            switchToRecommendFragment();
+        } else if (fragmentIndex == TOPIC_OPERATE){
+            switchToOperateFragment();
+        }
+    }
+
+    private void switchToRecommendFragment() {
+        if (isSameFragment(TOPIC_RECOMMAND)) {
+            return;
+        }
+
+        FragmentTransaction transaction = getChildFragmentManager()
+                .beginTransaction();
+        if (mRecommendVideoFragmet == null) {
+            // 懒加载
+            mRecommendVideoFragmet = new RecommendVideoFragmet();
+        }
+
+        if (mCurrentFragment == null || !mRecommendVideoFragmet.isAdded()) {
+            // 首次初始化
+            transaction.add(R.id.layout_fragment, mRecommendVideoFragmet);
+        } else {
+            if (mRecommendVideoFragmet.isAdded()) {
+                transaction.hide(mCurrentFragment).show(mRecommendVideoFragmet);
+            } else {
+                transaction.hide(mCurrentFragment).add(R.id.layout_fragment, mRecommendVideoFragmet);
+            }
+        }
+
+        transaction.commit();
+
+        mCurrentFragment = mRecommendVideoFragmet;
+        mCurrentFragmentIndex = TOPIC_RECOMMAND;
+    }
+
+    private void switchToOperateFragment() {
+        if (isSameFragment(TOPIC_OPERATE)) {
+            return;
+        }
+
+        FragmentTransaction transaction = getChildFragmentManager()
+                .beginTransaction();
+        if (mOperaVideoFragment == null) {
+            // 懒加载
+            mOperaVideoFragment = new OperaVideoFragment();
+        }
+
+        if (mCurrentFragment == null || !mOperaVideoFragment.isAdded()) {
+            // 首次初始化
+            transaction.add(R.id.layout_fragment, mOperaVideoFragment);
+        } else {
+            if (mOperaVideoFragment.isAdded()) {
+                transaction.hide(mCurrentFragment).show(mOperaVideoFragment);
+            } else {
+                transaction.hide(mCurrentFragment).add(R.id.layout_fragment, mOperaVideoFragment);
+            }
+        }
+
+        transaction.commit();
+
+        mCurrentFragment = mOperaVideoFragment;
+        mCurrentFragmentIndex = TOPIC_OPERATE;
+    }
+
+    private boolean isSameFragment(int currentFragmentIndex) {
+        return mCurrentFragmentIndex == currentFragmentIndex;
     }
 }

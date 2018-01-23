@@ -17,6 +17,11 @@ public class NewViewHolder extends BaseViewHolder {
     }
 
     @Override
+    protected void initViews() {
+
+    }
+
+    @Override
     public void updateViews(BaseItem item) {
 
     }

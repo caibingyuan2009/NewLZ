@@ -1,5 +1,6 @@
 package com.news.lz.adapter.holder;
 
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.news.lz.R;
@@ -14,11 +15,15 @@ import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
  */
 
 public class VideoViewHolder extends BaseViewHolder {
-    @BindView(R.id.video_player)
     public JCVideoPlayer mVideoPlayer;
 
     public VideoViewHolder(ViewGroup parentView) {
         super(parentView, R.layout.item_video_view);
+    }
+
+    @Override
+    protected void initViews() {
+        mVideoPlayer = (JCVideoPlayer) findViewById(R.id.video_player);
     }
 
     @Override
