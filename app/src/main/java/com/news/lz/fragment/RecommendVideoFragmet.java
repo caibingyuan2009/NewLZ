@@ -1,26 +1,29 @@
 package com.news.lz.fragment;
 
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.avos.avoscloud.LogUtil;
 import com.news.lz.R;
-import com.news.lz.adapter.BaseRecyclerViewAdapter;
+import com.news.lz.adapter.BaseViewPagerAdapter;
 import com.news.lz.engine.ServiceDataManager;
 import com.news.lz.engine.callback.DataOperateCallback;
 import com.news.lz.entity.model.BaseItem;
+import com.news.lz.utils.CollectionUtils;
+import com.news.lz.widget.CustomViewPager;
+import com.news.lz.widget.RecommendVideoView;
+import com.news.lz.widget.VerticalViewPager;
+import com.news.lz.widget.transformer.DefaultTransformer;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static com.news.lz.entity.statistics.ItemTypeConst.ITEM_TYPE_VIDEO;
+import static android.view.View.OVER_SCROLL_NEVER;
 
 /**
  * 推荐视频页面
@@ -28,9 +31,8 @@ import static com.news.lz.entity.statistics.ItemTypeConst.ITEM_TYPE_VIDEO;
  */
 
 public class RecommendVideoFragmet extends Fragment {
-    private static final int SLIDE_DISTANCE_THRESOLD = 400;
-    private RecyclerView mRecyclerView;
-    private BaseRecyclerViewAdapter mAdapter;
+    private VerticalViewPager mVerticalViewPager;
+    List<View> mViewList = new ArrayList<>(0);
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,36 +49,11 @@ public class RecommendVideoFragmet extends Fragment {
     }
 
     private void initViews(View rootView) {
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            private int mDistanceY = 0;
-            private int mCurrentItemPosition = 0;
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                mDistanceY += dy;
-            }
-
-           @Override
-           public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-               super.onScrollStateChanged(recyclerView, newState);
-               if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    if (mDistanceY > SLIDE_DISTANCE_THRESOLD) {
-                        mCurrentItemPosition ++;
-                    } else if (mDistanceY < -SLIDE_DISTANCE_THRESOLD) {
-                        mCurrentItemPosition --;
-                        if (mCurrentItemPosition < 0) {
-                            mCurrentItemPosition = 0;
-                        }
-                    }
-                   mRecyclerView.scrollToPosition(mCurrentItemPosition);
-                   mDistanceY = 0;
-               }
-           }});
-        mAdapter = new BaseRecyclerViewAdapter(ITEM_TYPE_VIDEO);
-        mRecyclerView.setAdapter(mAdapter);
+        mVerticalViewPager = (VerticalViewPager) rootView.findViewById(R.id.vertical_viewpager);
+        mVerticalViewPager.setPageTransformer(true, new DefaultTransformer());
+        mVerticalViewPager.setOverScrollMode(OVER_SCROLL_NEVER);
+        mVerticalViewPager.setOffscreenPageLimit(10);
+        mVerticalViewPager.setAdapter(new BaseViewPagerAdapter(mViewList));
     }
 
     private void initDatas() {
@@ -88,9 +65,57 @@ public class RecommendVideoFragmet extends Fragment {
 
             @Override
             public void onReadSuccess(List<? extends BaseItem> itemList) {
-                mAdapter.setDatas(itemList);
+                if (CollectionUtils.isListEmpty(itemList)) {
+                    return;
+                }
+                mViewList.clear();
+
+                for (BaseItem item : itemList) {
+                    RecommendVideoView recommendVideoView = new RecommendVideoView(getActivity());
+                    recommendVideoView.updateViews(item);
+                    mViewList.add(recommendVideoView);
+                }
+
+                mVerticalViewPager.getAdapter().notifyDataSetChanged();
             }
         });
+
+        mVerticalViewPager.addOnPageChangeListener(new CustomViewPager.OnPageChangeListener() {
+            private int mLastPosition = 0;
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(final int position) {
+                if (!checkPageAvaible(position)) {
+                    return;
+                }
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((RecommendVideoView) mViewList.get(mLastPosition)).stopVideo();
+                        ((RecommendVideoView) mViewList.get(position)).restartVideo();
+                        mLastPosition = position;
+                    }
+                }, 500);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+    }
+
+    private boolean checkPageAvaible(int position) {
+        if (CollectionUtils.isListEmpty(mViewList) || mViewList.size() <= position) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
@@ -102,4 +127,5 @@ public class RecommendVideoFragmet extends Fragment {
     public void onDestroy() {
         super.onDestroy();
     }
+
 }

@@ -1,13 +1,11 @@
 package com.news.lz.adapter.holder;
 
-import android.view.View;
 import android.view.ViewGroup;
 
 import com.news.lz.R;
 import com.news.lz.entity.model.BaseItem;
 import com.news.lz.entity.model.VideoItem;
 
-import butterknife.BindView;
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
 
 /**

@@ -10,7 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/view_pager"
-        android:background="@android:color/transparent"/>
+        android:background="@android:color/transparent"
+        android:focusable="false"
+        android:clickable="false"/>
 
     <View
         android:layout_width="match_parent"
@@ -19,7 +21,7 @@
         android:id="@+id/divider"
         android:layout_above="@+id/tabLayout"/>
 
-    <android.support.design.widget.TabLayout
+    <com.news.lz.widget.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="50dp"
